@@ -174,7 +174,7 @@
                 }
                 $("list").innerHTML = "";
                 output.forEach((data) => {
-                    const url = `${window.location.href}/#${data.fragment}`.replace("/bewerken/", "/bekijken/");
+                    const url = `${window.location.href}#${data.fragment}`.replace("/bewerken/", "/bekijken/");
                     const div = document.createElement("div");
                     div.setAttribute("class", "card");
                     div.innerHTML = `
