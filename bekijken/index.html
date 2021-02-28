@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="./favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Bekijken</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            font: 18px sans-serif;
+        }
+        
+        #not-found {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #found {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="not-found">
+        <div>Niet gevonden.</div>
+    </div>
+    
+    <div id="found">
+        <div id="title"></div>
+        <div id="container"></div>
+    </div>
+    
+    <script>
+        window.addEventListener("load", () => main());
+        
+        function $(id) {
+            return document.getElementById(id);
+        }
+        
+        function main() {
+            const fragment = window.location.hash?.slice(1) ?? "/";
+            const request = fetch("https://vipa.limmilta.repl.co/", {
+                method: "POST",
+                headers: { "content-type": "text/plain" },
+                body: JSON.stringify({
+                    type: "get",
+                    data: { fragment },
+                }),
+            });
+            request
+                .then((response) => response.json())
+                .then((data) => renderFound(data.error, data.data))
+                .catch((err) => renderNotFound());
+        }
+        
+        function renderNotFound() {
+            $("not-found").style.display = "flex";
+        }
+        
+        function renderFound(err, data) {
+            if (err) {
+                renderNotFound();
+                return;
+            }
+            $("title").textContent = data.title;
+            $("container").innerHTML = `<video src="${data.video}" controls></video>`;
+            $("found").style.display = "flex";
+        }
+    </script>
+</body>
+</html>

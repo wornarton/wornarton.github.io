@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="./favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Bewerken</title>
+    <style>
+        html, body {
+            margin: 0;
+            height: 100%;
+            width: 100%;
+            font: 18px sans-serif;
+        }
+        
+        #login {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        input {
+            padding: 8px;
+            width: 400px;
+            font: 16px sans-serif;
+        }
+        
+        #login-input {
+            width: 200px;
+            padding: 8px;
+            font: 18px sans-serif;
+        }
+        
+        #error {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #admin {
+            display: none;
+            margin: 64px;
+        }
+        
+        .new {
+            padding: 32px;
+            border: 3px solid black;
+            background-color: beige;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 200px;
+        }
+        
+        #button-new {
+            padding: 12px;
+            cursor: pointer;
+            font: 18px sans-serif;
+        }
+        
+        .card {
+            margin-top: 32px;
+            padding: 32px;
+            border: 3px solid black;
+            border-radius: 8px;
+            background-color: powderblue;
+        }
+    </style>
+</head>
+<body>
+    <div id="login">
+        <h1>Paswoord:</h1>
+        <input id="login-input" type="password" autofocus />
+    </div>
+    
+    <div id="error">
+        <div>Laden mislukt. Probeer opnieuw.</div>
+    </div>
+    
+    <div id="admin">
+        <div class="new">
+            <b>Voeg nieuwe video toe:</b>
+            <div>Naam: <input id="name-input" type="text" /></div>
+            <div>Link: &nbsp;&nbsp;&nbsp;<input id="video-input" type="text" /></div>
+            <button id="button-new">+ Maak pagina aan</button>
+        </div>
+        <div id="list"></div>
+    </div>
+    
+    <script>
+        let password;
+        
+        window.addEventListener("load", () => {
+            const pass = localStorage.getItem("vipa_pass");
+            if (pass) {
+                password = atob(pass);
+                tryToLogIn();
+            }
+        });
+        
+        function $(id) {
+            return document.getElementById(id);
+        }
+        
+        $("login-input").addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                password = $("login-input").value;
+                if (password.trim() !== "") tryToLogIn();
+            }
+        });
+        
+        $("button-new").addEventListener("click", () => {
+            const name = $("name-input").value.trim();
+            const video = $("video-input").value.trim();
+            if (name === "" || video === "") return;
+            $("name-input").value = "";
+            $("video-input").value = "";
+            createVideo(name, video);
+        });
+        
+        function createVideo(title, video) {
+            const input = {
+                type: "create",
+                data: { password, title, video },
+            };
+            request(input, (err, output) => {
+                loadList();
+            });
+        }
+        
+        function request(data, callback) {
+            const request = fetch("https://vipa.limmilta.repl.co/", {
+                method: "POST",
+                headers: { "content-type": "text/plain" },
+                body: JSON.stringify(data),
+            });
+            request
+                .then((response) => response.json())
+                .then((data) => callback(data.error, data.data))
+                .catch((err) => callback(err));
+        }
+        
+        function tryToLogIn() {
+            $("login").style.display = "none";
+            const input = {
+                type: "login",
+                data: { password },
+            };
+            request(input, (err, output) => {
+                if (err) {
+                    $("login").style.display = "flex";
+                    return;
+                }
+                localStorage.setItem("vipa_pass", btoa(password));
+                loadList();
+            });
+        }
+        
+        function loadList() {
+            const input = {
+                type: "list",
+                data: { password },
+            };
+            request(input, (err, output) => {
+                if (err) {
+                    $("error").style.display = "flex";
+                    return;
+                }
+                $("list").innerHTML = "";
+                output.forEach((data) => {
+                    const url = `${window.location.href}/#${data.fragment}`.replace("/bewerken/", "/bekijken/");
+                    const div = document.createElement("div");
+                    div.setAttribute("class", "card");
+                    div.innerHTML = `
+                        <div>Video: <b>${data.title}</b></div>
+                        <br />
+                        <div><a href="${url}" target="_blank">${url}</div>
+                    `;
+                    $("list").appendChild(div);
+                });
+                $("admin").style.display = "block";
+            });
+        }
+    </script>
+</body>
+</html>
