@@ -9,8 +9,6 @@
     <style>
         html, body {
             margin: 0;
-            height: 100%;
-            width: 100%;
             font: 18px sans-serif;
         }
         
@@ -25,9 +23,17 @@
         #found {
             height: 100%;
             display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            margin: 64px;
+        }
+        
+        #title {
+            margin-top: 32px;
+            font: bold 32px sans-serif;
+            margin-bottom: 32px;
+        }
+        
+        video {
+            width: 60%;
         }
     </style>
 </head>
@@ -36,7 +42,7 @@
         <div>Niet gevonden.</div>
     </div>
     
-    <div id="found">
+    <div id="found" align="center">
         <div id="title"></div>
         <div id="container"></div>
     </div>
@@ -74,8 +80,8 @@
                 return;
             }
             $("title").textContent = data.title;
-            $("container").innerHTML = `<video src="${data.video}" controls></video>`;
-            $("found").style.display = "flex";
+            $("container").innerHTML = `<video src="${data.video}" controls autoplay></video>`;
+            $("found").style.display = "block";
         }
     </script>
 </body>
