@@ -11,15 +11,19 @@
 </head>
 <body>
     You should get redirected...
-    <a id="a" href="#">Click here</a>
-    
+    <a id="a" href="intent://view/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end">Click here</a>
+    <textarea id="text"></textarea><button onclick="yay()">Go</button>
     <script>
         window.addEventListener("load", function () {
-            var a = document.getElementById("a");
-            a.href = "intent://view/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end";
+            //var a = document.getElementById("a");
+            //a.href = "intent://view/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end";
             // "dia.monaxis.test://something/" + window.location.hash;
-            setTimeout(() => { a.click(); }, 100);
+            // setTimeout(() => { a.click(); }, 100);
         });
+        function yay() {
+            var value = document.getElementById("text").value;
+            window.location = value;
+        }
     </script>
 </body>
 </html>
