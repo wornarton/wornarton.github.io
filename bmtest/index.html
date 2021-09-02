@@ -11,10 +11,14 @@
 </head>
 <body>
     You should get redirected...
+    <a id="a" href="#">Click here</a>
     
     <script>
         window.addEventListener("load", function () {
-            window.location = "dia.monaxis.test://something/" + window.location.hash;
+            var a = document.getElementById("a");
+            a.href = "intent://view/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end";
+            // "dia.monaxis.test://something/" + window.location.hash;
+            setTimeout(() => { a.click(); }, 100);
         });
     </script>
 </body>
