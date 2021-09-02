@@ -19,7 +19,7 @@
             //a.href = "intent://view/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end";
             // "dia.monaxis.test://something/" + window.location.hash;
             // setTimeout(() => { a.click(); }, 100);
-            var hash = window.hash.slice(1);
+            var hash = window.location.hash.length === 0 ? "" : window.location.hash.slice(1);
             window.location = "intent://view/?" + hash + "/#Intent;scheme=myapp;package=dia.monaxis.twitchtest;end"
         });
         function yay() {
